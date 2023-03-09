@@ -1,11 +1,14 @@
 import axios from "axios";
 import React, { useRef } from "react";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import CommonLayout from "../layouts/CommonLayout";
 import { customAxios } from "../utils/CustomAxios";
 
 const Join = () => {
+  const navigate = useNavigate();
+
   const refs = useRef({
     idElement: null,
     pwElement: null,
@@ -79,7 +82,12 @@ const Join = () => {
         data: userData,
       })
       .then((response) => {
-        console.log(response);
+        if (response.data.code === 200) {
+          alert("회원가입에 성공했습니다.");
+          navigate("/login");
+        } else {
+          alert(response.data.message);
+        }
       })
       .catch(() => {})
       .finally(() => {});
