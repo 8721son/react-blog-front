@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import CommonLayout from "../layouts/CommonLayout";
 import logo from "../assets/logo.png";
-import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { Button, Card, Form, InputGroup } from "react-bootstrap";
 import { customAxios } from "../utils/CustomAxios";
 import { useNavigate } from "react-router-dom";
 import AuthStore from "../stores/AuthStore";
@@ -81,6 +81,12 @@ const Login = () => {
     }
   };
 
+  // 처음 로그인 페이지로 왔을 때 로그인 되어있는 유저를 비워주는 함수
+  useEffect(() => {
+    localStorage.removeItem("accessToken");
+    authStore.setLoginUser(null);
+  }, []);
+
   //로그인 페이지에 처음 들어왔을 때
   //로컬 스토리지에 rememberId가 있다면 -> input박스에 미리 채워주는 함수
   useEffect(() => {
@@ -92,11 +98,6 @@ const Login = () => {
       requestLogin();
     }
   };
-
-  // 처음 로그인 페이지로 왔을 때 로그인 되어있는 유저를 비워주는 함수
-  useEffect(() => {
-    authStore.setLoginUser(null);
-  }, []);
 
   return (
     <div>
