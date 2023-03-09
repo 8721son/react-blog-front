@@ -3,9 +3,13 @@ import CommonLayout from "../layouts/CommonLayout";
 import logo from "../assets/logo.png";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { customAxios } from "../utils/CustomAxios";
+import { useNavigate } from "react-router-dom";
+import AuthStore from "../stores/AuthStore";
 
-//아이디 기억하기
 const Login = () => {
+  const navigate = useNavigate();
+  const authStore = AuthStore();
+
   const refs = useRef({
     idElement: null,
     pwElement: null,
@@ -61,6 +65,7 @@ const Login = () => {
           }
           const token = response.data.accessToken;
           localStorage.setItem("accessToken", token);
+          navigate("/");
         }
       })
       .catch(() => {})
@@ -80,6 +85,17 @@ const Login = () => {
   //로컬 스토리지에 rememberId가 있다면 -> input박스에 미리 채워주는 함수
   useEffect(() => {
     setLoginPage();
+  }, []);
+
+  const enterKeyLogin = (event) => {
+    if (event.keyCode === 13) {
+      requestLogin();
+    }
+  };
+
+  // 처음 로그인 페이지로 왔을 때 로그인 되어있는 유저를 비워주는 함수
+  useEffect(() => {
+    authStore.setLoginUser(null);
   }, []);
 
   return (
@@ -103,6 +119,7 @@ const Login = () => {
             <Form.Control
               ref={(r) => (refs.current.pwElement = r)}
               placeholder='비밀번호를 입력해주세요'
+              onKeyUp={enterKeyLogin}
               type='password'
             />
           </InputGroup>
