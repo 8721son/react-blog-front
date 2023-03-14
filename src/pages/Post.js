@@ -7,6 +7,7 @@ import { customAxios } from "../utils/CustomAxios";
 import LikeRedImg from "../assets/like-red.svg";
 import LikeImg from "../assets/like.svg";
 import { Viewer } from "@toast-ui/react-editor";
+import produce from "immer";
 
 const Post = () => {
   const params = useParams();
@@ -17,7 +18,18 @@ const Post = () => {
 
   const [post, setPost] = useState(null);
 
-  const clickLike = () => {};
+  const clickLike = () => {
+    customAxios
+      .privateAxios({
+        method: "post",
+        url: `/v1/api/post/like/${postIdx}`,
+      })
+      .then((response) => {
+        getPost();
+      })
+      .catch(() => {})
+      .finally(() => {});
+  };
 
   const getPost = () => {
     // NaN -> Not a Number
