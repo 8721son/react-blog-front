@@ -6,11 +6,12 @@ import { Button, Col, Form, Image, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import ExitImg from "../assets/exit.svg";
 import AuthStore from "../stores/AuthStore";
+import { customAxios } from "../utils/CustomAxios";
 
 // 1. 임시 저장
 // 2. 글 작성
-// 3. 에디터 크기를 브라우저 크기에 따라 동적으로 변동되게 - O
-// 4. 로그인 한 유저만 글 작성이 가능하게(auth store) - O
+// 3. 에디터 크기를 브라우저 크기에 따라 동적으로 변동되게
+// 4. 로그인 한 유저만 글 작성이 가능하게(auth store)
 
 const InsertPost = () => {
   const authStore = AuthStore();
@@ -22,6 +23,77 @@ const InsertPost = () => {
     titleElement: null,
     editorElement: null,
   });
+
+  const validateFields = () => {
+    const { titleElement, editorElement } = refs.current;
+    if (titleElement.value === "") {
+      alert("제목을 입력해주세요.");
+      return false;
+    }
+    if (editorElement.getInstance().getMarkdown() === "") {
+      alert("내용을 입력해주세요.");
+      return false;
+    }
+    return true;
+  };
+
+  const save = () => {
+    // validation check
+    if (!validateFields()) {
+      return;
+    }
+
+    const { titleElement, editorElement } = refs.current;
+
+    const title = titleElement.value;
+    const content = editorElement.getInstance().getMarkdown();
+
+    const markdownImageRegex = /\[.*\]\((.*)\)/gi; // 이미지
+    //html 태그, \n (html 문법)
+    const markdownRegex = /(\*|_|#|`|~|>|!|\[|\]|\(|\)|\{|\}|\||\\)/gi;
+
+    console.log(content);
+    // 이미지 날리고, html날린 후 150자
+    const summary = content
+      .replace(markdownImageRegex, "")
+      .replace(markdownRegex, "")
+      .substring(0, 151);
+
+    const imageList = content.match(markdownImageRegex);
+    const thumbnailMarkdown = imageList != null ? imageList[0] : null;
+
+    const thumbnail = thumbnailMarkdown
+      ? thumbnailMarkdown.substring(
+          thumbnailMarkdown.indexOf("](") + 2,
+          thumbnailMarkdown.length - 1
+        )
+      : null;
+
+    const post = {
+      title: title,
+      content: content,
+      summary: summary,
+      thumbnail: thumbnail,
+    };
+
+    customAxios
+      .privateAxios({
+        method: "post",
+        url: "/v1/api/post",
+        data: post,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          alert("게시물 저장에 성공했습니다.");
+          localStorage.removeItem("tempPost");
+          navigate(`/post/${response.data.content.idx}`);
+        } else {
+          alert(response.data.message);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {});
+  };
 
   const tempSave = () => {
     // ref 제목이랑 editor내용 가져와서 로컬 스토리지에 JSON타입으로 저장
@@ -114,7 +186,7 @@ const InsertPost = () => {
           </Col>
           <Col className='col-auto'>
             {/* 저장 */}
-            <Button type='button' variant='outline-success'>
+            <Button type='button' variant='outline-success' onClick={save}>
               게시하기
             </Button>
           </Col>
