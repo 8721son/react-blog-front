@@ -5,6 +5,7 @@ import Join from "./pages/Join";
 import Login from "./pages/Login";
 import Posts from "./pages/Posts";
 import InsertPost from "./pages/InsertPost";
+import Post from "./pages/Post";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path='/join' element={<Join />} />
           <Route path='/login' element={<Login />} />
           <Route path='/insert-post' element={<InsertPost />} />
+          <Route path='/post/:idx' element={<Post />} />
         </Routes>
       </BrowserRouter>
     </div>
