@@ -31,7 +31,6 @@ class CustomAxios {
       localStorage.removeItem("accessToken");
       throw new axios.Cancel("토큰이 만료되었습니다.");
     }
-
     config.headers["Authorization"] = `Bearer ${accessToken}`;
     return config;
   };
