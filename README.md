@@ -19,5 +19,13 @@
    2. useLocation으로 특정 컴포넌트에서만 ui 그림
    3. query string
 
+4. 글 작성 페이지
+
+- window 이벤트 ( 창 크기에 따라 동적으로 에디터 크기 변환 )
+- 임시저장
+- private axios (인터셉터, 헤더에 access token)
+
+2. 메인페이지
+
 React -> https://github.com/8721son/react-blog-front
 Spring -> https://github.com/8721son/react-blog-api
